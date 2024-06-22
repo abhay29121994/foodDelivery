@@ -1,0 +1,35 @@
+.header-wrapper{
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-wrapper ul{
+    display: flex;
+}
+
+.header-wrapper ul li{
+    list-style-type: none;
+    color:black;
+    padding: 5px;
+    
+
+}
+
+.header-wrapper ul li a {
+    text-decoration: none;
+    color:black; 
+}
+
+.header-wrapper ul li a:hover{
+    color:rgb(33, 120, 252)
+}
+
+.footer-wrapper{
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    background-color: rgb(231, 220, 220);
+    width: 100%;
+    font-size: 13px;
+    /* padding: 5px; */
+}

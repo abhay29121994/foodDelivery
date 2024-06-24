@@ -13,7 +13,25 @@ export async function GET() {
 export async function POST(request) {
   let payload = await request.json();
   await mongoose.connect(connectionStr, { useNewUrlParser: true });
-  const restaurant = new restaurantSchema(payload);
-  const result = await restaurant.save();
-  return NextResponse.json({ result, success: true });
+  let result;
+  let success = false;
+  if (payload.login) {
+    //for login
+    result = await restaurantSchema.findOne({
+      email: payload.email,
+      password: payload.password,
+    });
+    if (result) {
+      success = true;
+    }
+  } else {
+    // for signup
+    const restaurant = new restaurantSchema(payload);
+    result = await restaurant.save();
+    if (result) {
+      success = true;
+    }
+  }
+
+  return NextResponse.json({ result, success });
 }

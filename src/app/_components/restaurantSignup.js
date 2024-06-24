@@ -50,14 +50,10 @@ const RestaurantSignup = () => {
     });
     response = await response.json();
     if (response.success) {
-      // console.log(response);
       const { result } = response;
-      // console.log(result);
       delete result.password;
-      // console.log(result);
       localStorage.setItem("restaurant", JSON.stringify(result));
       router.push("restaurant/dashboard");
-      // alert("Registeration is successful");
     }
   };
   return (

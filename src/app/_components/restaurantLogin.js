@@ -1,16 +1,33 @@
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const RestaurantLogin = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState(false);
-  const handleLogin = () => {
+  const router = useRouter();
+
+  const handleLogin = async () => {
     if (!email || !password) {
       setError(true);
+      return false;
     } else {
       setError(false);
     }
-    console.log(email, password);
+    let response = await fetch("http://localhost:3000/api/restaurant", {
+      method: "POST",
+      body: JSON.stringify({ email, password, login: true }),
+    });
+
+    response = await response.json();
+    if (response.success) {
+      const { result } = response;
+      delete result.password;
+      localStorage.setItem("restaurant", JSON.stringify(result));
+      router.push("/restaurant/dashboard");
+    } else {
+      alert("Not login");
+    }
   };
   return (
     <>

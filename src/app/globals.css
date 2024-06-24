@@ -23,3 +23,9 @@
     cursor:pointer;
     margin: 10px;
 }
+.input-error{
+    color:red;
+    position: absolute;
+    font-size: 13px;
+    padding: 5px;
+}

@@ -4,22 +4,23 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET(request, content) {
-  const id = content.params.id;
   let success = false;
+  let id = content.params.id;
   await mongoose.connect(connectionStr, { useNewUrlParser: true });
-  const result = await foodSchema.find({ resto_id: id });
+  let result = await foodSchema.findOne({ _id: id });
   if (result) {
     success = true;
   }
   return NextResponse.json({ result, success });
 }
 
-export async function DELETE(request, content) {
+export async function PUT(request, content) {
   let success = false;
-  const id = content.params.id;
+  let id = content.params.id;
+  let payload = await request.json();
   await mongoose.connect(connectionStr, { useNewUrlParser: true });
-  const result = await foodSchema.deleteOne({ _id: id });
-  if (result.deletedCount > 0) {
+  let result = await foodSchema.findOneAndUpdate({ _id: id }, payload);
+  if (result) {
     success = true;
   }
   return NextResponse.json({ result, success });

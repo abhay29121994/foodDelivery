@@ -1,15 +1,16 @@
-import { useState } from "react";
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const AddFoodItem = (props) => {
+const EditFoodItem = (props) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [path, setPath] = useState(
-    "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"
-  );
+  const [path, setPath] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState(false);
+  const router = useRouter();
 
-  const handleAddFoodItem = async () => {
+  const handleEditFoodItem = async () => {
     let resto_id;
 
     if (!name || !price || !path || !description) {
@@ -19,36 +20,41 @@ const AddFoodItem = (props) => {
       setError(false);
     }
 
-    const restaurantData = JSON.parse(localStorage.getItem("restaurant"));
-    if (restaurantData) {
-      resto_id = restaurantData._id;
-    }
-
-    let response = await fetch("http://localhost:3000/api/restaurant/foods", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        price,
-        img_path: path,
-        description,
-        resto_id,
-      }),
-    });
+    let response = await fetch(
+      "http://localhost:3000/api/restaurant/foods/edit/" + props.params.id,
+      {
+        method: "PUT",
+        body: JSON.stringify({ name, price, img_path: path, description }),
+      }
+    );
     response = await response.json();
     if (response.success) {
-      alert("Food item added successfully!");
-      setName("");
-      setPrice("");
-      setPath("");
-      setDescription("");
-      props.setAddItem(false);
+      alert("Data Updated");
+      router.push("../dashboard");
     } else {
-      alert("Food item not added.");
+      alert("Data not updated");
     }
   };
+  useEffect(() => {
+    handleLoadFoodItem();
+  }, []);
+
+  const handleLoadFoodItem = async () => {
+    let response = await fetch(
+      "http://localhost:3000/api/restaurant/foods/edit/" + props.params.id
+    );
+    response = await response.json();
+    if (response.success) {
+      setName(response.result.name);
+      setPrice(response.result.price);
+      setPath(response.result.img_path);
+      setDescription(response.result.description);
+    }
+  };
+
   return (
     <div className="container">
-      <h1>Add New Food Item</h1>
+      <h1>Edit Food Item</h1>
       <div className="input-wrapper">
         <img src={path} width="200px" />
       </div>
@@ -81,12 +87,7 @@ const AddFoodItem = (props) => {
           type="text"
           className="input-field"
           placeholder="Enter path"
-          value={
-            path ==
-            "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"
-              ? ""
-              : path
-          }
+          value={path}
           onChange={(event) => setPath(event.target.value)}
         />
         {error && !path && (
@@ -107,12 +108,15 @@ const AddFoodItem = (props) => {
       </div>
 
       <div className="input-wrapper">
-        <button onClick={handleAddFoodItem} className="button">
-          Add Food Item
+        <button onClick={handleEditFoodItem} className="button">
+          Update Food Item
+        </button>
+        <button onClick={() => router.push("../dashboard")} className="button">
+          Back
         </button>
       </div>
     </div>
   );
 };
 
-export default AddFoodItem;
+export default EditFoodItem;

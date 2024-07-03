@@ -12,7 +12,7 @@ const RestaurantDashboard = () => {
       <button onClick={() => SetAddItem(true)}>Add Food Item</button>
       <button onClick={() => SetAddItem(false)}>Dashboard</button>
 
-      {addItem ? <AddFoodItem /> : <FoodItemList />}
+      {addItem ? <AddFoodItem setAddItem={SetAddItem} /> : <FoodItemList />}
     </>
   );
 };

@@ -7,8 +7,10 @@ export default function Home() {
   const [locations, setLocations] = useState([]);
   const [selectedlocation, setSelectedLocation] = useState("");
   const [showLocation, setShowLocation] = useState(false);
+  const [restaurants, setRestaurants] = useState([]);
   useEffect(() => {
     loadLocations();
+    loadRestaurants();
   }, []);
 
   const loadLocations = async () => {
@@ -19,9 +21,24 @@ export default function Home() {
     }
   };
 
+  const loadRestaurants = async (params) => {
+    let url = "http://localhost:3000/api/customer";
+    if (params?.location) {
+      url = url + "?location=" + params.location;
+    } else if (params?.restaurant) {
+      url = url + "?restaurant=" + params.restaurant;
+    }
+    let response = await fetch(url);
+    response = await response.json();
+    if (response.success) {
+      setRestaurants(response.result);
+    }
+  };
+
   const handleListItem = (item) => {
     setSelectedLocation(item);
     setShowLocation(false);
+    loadRestaurants({ location: item });
   };
   return (
     <main>
@@ -46,8 +63,28 @@ export default function Home() {
             type="text"
             className="search-input"
             placeholder="Search Food or restaurant"
+            onChange={(event) =>
+              loadRestaurants({ restaurant: event.target.value })
+            }
           />
         </div>
+      </div>
+      <div className="restaurant-list-container">
+        {restaurants.map((item) => (
+          <div className="restaurant-wrapper">
+            <div className="restaurant-header">
+              <h3>{item.name}</h3>
+              <h5>Contact : {item.contact}</h5>
+            </div>
+
+            <div className="address-header">
+              <div>{item.city}</div>
+              <div>
+                , {item.address}, Email : {item.email}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
       <Footer />
     </main>
